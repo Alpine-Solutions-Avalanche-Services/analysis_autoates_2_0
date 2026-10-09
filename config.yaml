@@ -1,0 +1,38 @@
+# AutoATES classifier configuration.
+# Mirrors the parameters set at the top of AutoATES_classifier.py.
+# Thresholds are set to the defaults documented in that script's comments.
+
+working_dir: data/raster_data
+
+inputs:
+  dem: Dem.tif
+  canopy: forest_ccp.tif
+  cell_count: cellCounts.tif
+  flow_path: fpTravelAngle.tif
+  start_zone: pra_binary.tif
+
+forest_type: sen2cc             # bav | stems | pcc | sen2cc
+
+slope_angle_thresholds:         # degrees
+  sat01: 15                     # class 0 / 1
+  sat12: 18                     # class 1 / 2
+  sat23: 28                     # class 2 / 3
+  sat34: 39                     # class 3 / 4, applied to the smoothed slope raster
+smoothing_window_size: 3
+
+alpha_angle_thresholds:         # degrees
+  aat1: 18
+  aat2: 25
+  aat3: 38
+
+tree_thresholds:                # upper bounds: open / sparse / mixed
+  pcc:    {tree1: 10,  tree2: 50,  tree3: 65}
+  bav:    {tree1: 10,  tree2: 20,  tree3: 25}
+  stems:  {tree1: 100, tree2: 250, tree3: 500}
+  sen2cc: {tree1: 20,  tree2: 60,  tree3: 85}
+
+cell_count_thresholds:
+  cc1: 5
+  cc2: 40
+
+island_size: 30000              # generalization threshold, map units squared
