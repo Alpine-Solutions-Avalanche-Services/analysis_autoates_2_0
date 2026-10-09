@@ -7,8 +7,8 @@ case-specific. Place your own data here following the structure below.
 
 ## Required input layers
 
-These are the layers the classifier reads (see the `--- Set Input Files` block
-in `AutoATES_classifier.py`):
+These are the layers the classifier reads. Their file names are set under
+`inputs` in `config.yaml`:
 
 | File | Variable | Description |
 |------|----------|-------------|
@@ -34,6 +34,7 @@ The classifier writes these into the working directory as it runs:
 | `merge_all.tif` | Combined terrain, forest, and start-zone classification before generalization. |
 | `ates_gen.tif` | **Final output:** generalized ATES map (clusters smaller than `ISL_SIZE` removed). |
 | `inputpara.csv` | Log of the input parameters used for the run (appended each run). |
+| `autoates.log` | Run log (appended each run). The name is set under `logging` in `config.yaml`. |
 
 ## Subfolders
 
@@ -46,6 +47,5 @@ The classifier writes these into the working directory as it runs:
 - GIS sidecar files (`.aux.xml`, `.ovr`, `.tfw`, `.xml`, `.vat.dbf`, `.vat.cpg`)
   accompany many rasters and are produced/consumed by GIS software.
 - ArcGIS `*.sr.lock` files are transient locks and should not be committed.
-- The classifier's working directory is set near the top of
-  `AutoATES_classifier.py` (`wd = ...`); point it at this folder (or a subfolder)
-  before running.
+- The classifier's working directory is set by `working_dir` in `config.yaml`;
+  point it at this folder (or a subfolder) before running.

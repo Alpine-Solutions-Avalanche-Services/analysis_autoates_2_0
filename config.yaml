@@ -1,15 +1,23 @@
-# AutoATES classifier configuration.
-# Mirrors the parameters set at the top of AutoATES_classifier.py.
-# Thresholds are set to the defaults documented in that script's comments.
+# AutoATES classifier configuration, read by AutoATES_classifier.py.
+# Thresholds are set to the defaults documented in the original script.
 
+# Folder holding the input rasters; outputs are written here too.
+# A relative path is resolved against the folder containing this file.
 working_dir: data/raster_data
 
+# File names are resolved against working_dir. Absolute paths also work.
 inputs:
-  dem: Dem.tif
+  dem: dem.tif
   canopy: forest_ccp.tif
   cell_count: cellCounts.tif
   flow_path: fpTravelAngle.tif
-  start_zone: pra_binary.tif
+  start_zone: PRA_binary.tif
+
+logging:
+  level: INFO
+  file: autoates.log            # resolved against working_dir
+
+nodata_value: -9999
 
 forest_type: sen2cc             # bav | stems | pcc | sen2cc
 
@@ -18,12 +26,14 @@ slope_angle_thresholds:         # degrees
   sat12: 18                     # class 1 / 2
   sat23: 28                     # class 2 / 3
   sat34: 39                     # class 3 / 4, applied to the smoothed slope raster
+  max: 100                      # upper bound of valid slope values
 smoothing_window_size: 3
 
 alpha_angle_thresholds:         # degrees
   aat1: 18
   aat2: 25
   aat3: 38
+  max: 90                       # upper bound of valid travel angles
 
 tree_thresholds:                # upper bounds: open / sparse / mixed
   pcc:    {tree1: 10,  tree2: 50,  tree3: 65}
@@ -34,5 +44,34 @@ tree_thresholds:                # upper bounds: open / sparse / mixed
 cell_count_thresholds:
   cc1: 5
   cc2: 40
+  max: 20000                    # upper bound of valid cell counts
 
-island_size: 30000              # generalization threshold, map units squared
+# Codes summed with the terrain class (0-4) to index ates_lookup.
+class_codes:
+  forest:
+    open: 10
+    sparse: 20
+    dense: 30
+    very_dense: 40
+  forest_excluded: -1           # marks cells outside a forest class
+  non_release: 0
+  release: 100
+
+# Final ATES class for terrain classes 0, 1, 2, 3, 4 (left to right).
+ates_lookup:
+  non_release:
+    open:       [0, 1, 2, 3, 4]
+    sparse:     [0, 1, 1, 2, 3]
+    dense:      [0, 1, 1, 1, 3]
+    very_dense: [0, 1, 1, 1, 2]
+  release:
+    open:       [0, 1, 2, 3, 4]
+    sparse:     [0, 1, 1, 2, 3]
+    dense:      [0, 1, 1, 2, 3]
+    very_dense: [0, 1, 1, 2, 2]
+
+generalization:
+  island_size: 30000            # clusters smaller than this are removed, map units squared
+  connectivity: 2               # neighbourhood used to label clusters
+  search_distance_divisor: 4    # fill search distance = cells per island / divisor
+  smoothing_iterations: 0
